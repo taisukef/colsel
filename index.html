@@ -47,8 +47,10 @@ window.onload = function() {
 		};
 	} else {
 		canvas.ontouchmove = function(e) {
-			var t = e.touches[0];
-			ondrag(t.pageX, t.pageY);
+			for (var i = 0; i < e.touches.length; i++) {
+				var t = e.touches[i];
+				ondrag(t.pageX, t.pageY);
+			}
 		};
 		canvas.ontouchstart = function(e) {
 			e.preventDefault();
