@@ -26,17 +26,11 @@ window.onload = function() {
 		g.draw();
 	};
 	
-	if (canvas.ontauchstart) {
-		canvas.ontouchmove = function(e) {
-			var t = e.touches[0];
-			ondrag(t.pageX, t.pageY);
-		};
-		canvas.ontouchstart = function(e) {
-			e.preventDefault();
-		};
-	} else {
+//	0.73
+	
+	if (canvas.ontauchstart === undefined) {
 		canvas.onmouseout = function() {
-			drag = false;
+//			drag = false;
 		};
 		canvas.onmousedown = function() {
 			drag = true;
@@ -50,6 +44,14 @@ window.onload = function() {
 			var mx = e.x;
 			var my = e.y;
 			ondrag(mx, my);
+		};
+	} else {
+		canvas.ontouchmove = function(e) {
+			var t = e.touches[0];
+			ondrag(t.pageX, t.pageY);
+		};
+		canvas.ontouchstart = function(e) {
+			e.preventDefault();
 		};
 	}
 	var init = function() {
@@ -90,7 +92,13 @@ window.onload = function() {
 			}
 		}
 		
-		var s = "rgb(" + col[0] + "," + col[1] + "," + col[2] + ") hsv(" + fixfloat(hsv[0], 2) + "," + fixfloat(hsv[1], 2) + "," + fixfloat(hsv[2], 2) + ")";
+		var s = "";
+		s += "hsv(" + fixfloat(hsv[0], 2) + "," + fixfloat(hsv[1], 2) + "," + fixfloat(hsv[2], 2) + ") ";
+		s += "rgb(" + col[0] + "," + col[1] + "," + col[2] + ") ";
+		var tohex = function(n) {
+			return fixnum(n.toString(16), 2);
+		};
+		s += "#" + tohex(col[0]) + tohex(col[1]) + tohex(col[2]);
 		
 		g.font = "normal 20px monospace";
 		g.setColor(0, 0, 0);
@@ -100,7 +108,6 @@ window.onload = function() {
 		g.fillText(s, gw - met.width - 10, gh - 20 - 10);
 	};
 	g.init();
-	g.draw();
 };
 </script>
 <style>
