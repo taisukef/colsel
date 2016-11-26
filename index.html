@@ -110,6 +110,9 @@ window.onload = function() {
 		g.fillText(s, gw - met.width - 10, gh - 20 - 10);
 	};
 	g.init();
+	window.onresize = function() {
+		g.draw();
+	};
 };
 </script>
 <style>
