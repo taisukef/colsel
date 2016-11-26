@@ -15,22 +15,7 @@ window.onload = function() {
 	
 	var drag = false;
 	
-	canvas.onmouseout = function() {
-		drag = false;
-	};
-	canvas.onmousedown = function() {
-		drag = true;
-	};
-	canvas.onmouseup = function() {
-		drag = false;
-	};
-	var mx, my;
-	canvas.onmousemove = function(e) {
-		if (!drag)
-			return;
-		mx = e.x;
-		my = e.y;
-		
+	var ondrag = function(mx, my) {
 		var n = Math.floor(mx / g.cw * 3);
 		var val = 1 - my / g.ch;
 		if (n == 0) {
@@ -40,6 +25,33 @@ window.onload = function() {
 		}
 		g.draw();
 	};
+	
+	if (canvas.ontauchstart) {
+		canvas.ontouchmove = function(e) {
+			var t = e.touches[0];
+			ondrag(t.pageX, t.pageY);
+		};
+		canvas.ontouchstart = function(e) {
+			e.preventDefault();
+		};
+	} else {
+		canvas.onmouseout = function() {
+			drag = false;
+		};
+		canvas.onmousedown = function() {
+			drag = true;
+		};
+		canvas.onmouseup = function() {
+			drag = false;
+		};
+		canvas.onmousemove = function(e) {
+			if (!drag)
+				return;
+			var mx = e.x;
+			var my = e.y;
+			ondrag(mx, my);
+		};
+	}
 	var init = function() {
 		fire = [];
 	};
