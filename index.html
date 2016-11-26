@@ -1,0 +1,118 @@
+<!DOCTYPE html><html><head><meta charset='utf-8'/>
+<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0"/>
+<title>colsel</title>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta property="og:image" content="ss.png"/>
+<link rel="apple-touch-icon" href="icon.png"/>
+<script src="fukuno.js"></script>
+<script>'use strict';
+window.onload = function() {
+	var canvas = get("canvas");
+	var g = getContext(canvas);
+	
+	var rgb = [ 225, 30, 116 ];
+	var hsv = rgb2hsv(rgb[0], rgb[1], rgb[2]);
+	
+	var drag = false;
+	
+	canvas.onmouseout = function() {
+		drag = false;
+	};
+	canvas.onmousedown = function() {
+		drag = true;
+	};
+	canvas.onmouseup = function() {
+		drag = false;
+	};
+	var mx, my;
+	canvas.onmousemove = function(e) {
+		if (!drag)
+			return;
+		mx = e.x;
+		my = e.y;
+		
+		var n = Math.floor(mx / g.cw * 3);
+		var val = 1 - my / g.ch;
+		if (n == 0) {
+			hsv[0] = val * 360;
+		} else {
+			hsv[n] = val;
+		}
+		g.draw();
+	};
+	var init = function() {
+		fire = [];
+	};
+	var contains = function(x1, y1, x2, y2, r) {
+		var dx = x1 - x2;
+		var dy = y1 - y2;
+		return dx * dx + dy * dy < r * r;
+	};
+	g.draw = function() {
+		var g = this;
+		canvas.width = window.innerWidth;
+		canvas.height = window.innerHeight + 1;
+		g.cw = canvas.width;
+		g.ch = canvas.height;
+		
+		var gw = g.cw;
+		var gh = g.ch;
+		
+		//		var col = hsv2rgb(0.5, .8, .7);
+		var col = hsv2rgb(hsv[0], hsv[1], hsv[2]);
+		g.setColor(col[0], col[1], col[2]);
+		g.fillRect(0, 0, gw, gh);
+		
+		for (var i = 0; i < 3; i++) {
+			var y = hsv[i];
+			if (i == 0)
+				y /= 360;
+			y = 1 - y;
+			y *= gh;
+			for (var j = 0; j < 2; j++) {
+				g.setColor(255 * j, 255 * j, 255 * j);
+				g.beginPath();
+				g.moveTo(i * gw / 3, y - j);
+				g.lineTo((i + 1) * gw / 3, y - j);
+				g.stroke();
+			}
+		}
+		
+		var s = "rgb(" + col[0] + "," + col[1] + "," + col[2] + ") hsv(" + fixfloat(hsv[0], 2) + "," + fixfloat(hsv[1], 2) + "," + fixfloat(hsv[2], 2) + ")";
+		
+		g.font = "normal 20px monospace";
+		g.setColor(0, 0, 0);
+		g.fillText(s, 10, 10 + 20);
+		g.setColor(255, 255, 255);
+		var met = g.measureText(s);
+		g.fillText(s, gw - met.width - 10, gh - 20 - 10);
+	};
+	g.init();
+	g.draw();
+};
+</script>
+<style>
+body {
+	margin: 0px;
+}
+#canvas {
+	cursor: default;
+}
+#main {
+	text-align: center;
+}
+a {
+	color: gray !important;
+}
+</style>
+</head>
+<body>
+
+<div id="main"><canvas id="canvas"></canvas><br></div>
+
+<div id="src">
+APP： CC BY <a href=http://fukuno.jig.jp/1587 target=_blank>fukuno.jig.jp</a> <a href=https://github.com/taisukef/colsel/>src on GitHub</a>
+</div>
+
+</body>
+</html>
